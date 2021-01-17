@@ -54,3 +54,8 @@ Input:
 
     * If any questions, please, send them in our channel :)
 
+Extra:
+
+* Read ALL the messages and get EVERY VALUE! :)
+
+### If anything is missing, please let me know :)
