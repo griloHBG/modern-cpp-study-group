@@ -4,6 +4,10 @@
 
 **Goal**: convert the readings from the file `can-messages-log.txt` - which contains CAN messages gotten from a force/torque sensor - into force (in Newtons) and torque (in Newton-meter) values.
 
+Hard Requirement:
+
+* Use the function in the header `force_toque_to_file.h` to output a file. (meant to compare your results with other's results)
+
 Requirements:
 
 * COMMENT YOUR CODE!
