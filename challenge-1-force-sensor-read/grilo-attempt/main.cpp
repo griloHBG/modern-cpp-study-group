@@ -168,7 +168,7 @@ struct Unit {
 };
 
 //std::tuple<float, float, float, float, float, float> matrixTimesSgData(std::array<float, 6*6> matrix, std::array<int, 6> sgData)
-std::array<float, 6> matrixTimesSgData(std::array<float, 6*6> matrix, std::array<int, 6> sgData) {
+std::array<float, 6> matrixTimesSgData(std::array<float, 6*6> matrix, std::array<int16_t, 6> sgData) {
     
     std::array<float, 6> ft{};
     
@@ -257,7 +257,7 @@ int main(int argc, char **argv) {
     uint8_t opCode;
     
     /// strain gage data received from sensor (MUST be assembled from two subsequent messages)
-    std::array<int, 6> sgData{};
+    std::array<int16_t, 6> sgData{};
     
     /// auxiliary variable to store where I'm in the payloadSize part of the string
     int byteStringPos;
