@@ -17,4 +17,19 @@ The Signal hierarchy:
 ![](./Images/Signals.png)
 
 
+## The `main.cpp` example
 
+In the `main.cpp`, we have a working example. If you want to see what happens with a recursion, just uncomment the indicated comment block, compile and execute it. On the figure bellow, the dashed lines represent the commented part of `main.cpp`
+
+![](./Images/main_example.png)
+
+##TODO
+
+* Handle closed loop diagrams
+    * Currently, a diagram with a closed loop incurs in an infinity loop
+        * Ideia 1: Create a BlockBuffer to cut the flow by having a state (of type `SignalType`) that gives to the "point of close loop" a value to start with.
+          * **This solution still allow the user to create a infinite-unsolvable loop**... Here we would need a health-checker thing to analise the infinity loop presence and raise a good error message about it (perhaps pointing out where is the problem)
+        * Ideia 2: A flag in each Block that shows if it already was used/evaluated of not
+            * This solution wouldn't need (**my guess**) a health-checker about the infinite loop. And seems to be a very simple implementation to solve this problem (**my guess**). Other advantage is to use this to avoid the re-evaluation of an already known output of a block.
+* After handling a Closed Loop, assure that it runs as expected.
+    * Something like a workspace to manage all this would be useful?

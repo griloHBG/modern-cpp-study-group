@@ -27,6 +27,10 @@ int main() {
     sum3.input<1>().connect(sum2.output<0>());
     sum3.input<2>().connect(bc5.output<0>());
     
+    std::cout << sum3.output<0>().get() << std::endl; //Ok : there is no loop to evaluate sum3's output
+    
+    //Uncomment the following comment block to see the infinity loop occuring
+    /*
     BlockSum<int, 2> sum4;
     BlockSum<int, 2> sum5;
     
@@ -36,7 +40,8 @@ int main() {
     sum5.input<0>().connect(sum4.output<0>());
     sum5.input<1>().connect(bc5.output<0>());
     
-    std::cout << sum3.output<0>().get() << std::endl;
+    std::cout << sum5.output<0>().get() << std::endl;
+    */
     
     return 0;
 }
