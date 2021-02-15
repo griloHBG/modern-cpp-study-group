@@ -7,38 +7,56 @@
 
 #include <vector>
 #include <memory>
+#include <functional>
 
 template<typename SignalType>
-class Signal {
-
+class SignalBase {
 private:
-    [[nodiscard]] virtual SignalType get() const = 0;
-
+    virtual SignalType get() = 0;
 };
 
 template<typename SignalType>
-class OutputSignal : public Signal<SignalType> {
+class InputSignal;
+
+template<typename SignalType>
+class OutputSignal : public SignalBase<SignalType> {
+    using BlockFunction = std::function<SignalType(void)>;
+    using LocalInputSignal = InputSignal<SignalType>;
+    
 public:
-    [[nodiscard]] SignalType get() const {
-        return this->value;
+    
+    OutputSignal() = default;
+    
+    OutputSignal(BlockFunction& bf) : bf(std::make_shared<BlockFunction>(bf)) {}
+    
+    SignalType get() {
+        return (*bf)();
     }
+    
+    void connect(LocalInputSignal& is) {
+        is.connect(this);
+    }
+    
+private:
+    std::shared_ptr<BlockFunction> bf{};
 };
 
 
 template<typename SignalType>
-class InputSignal : public Signal<SignalType> {
+class InputSignal : public SignalBase<SignalType> {
     using LocalOutputSignal = OutputSignal<SignalType>;
-    
 public:
-    void connect(const LocalOutputSignal& os) {
-        outputSignal = std::make_shared<LocalOutputSignal>(os);
-    }
     
-    [[nodiscard]] virtual SignalType get() const {
+    [[nodiscard]] SignalType get() {
         return outputSignal->get();
     }
+    
+    void connect(LocalOutputSignal& os) {
+        outputSignal = std::make_shared<LocalOutputSignal>(os);
+    }
 
 private:
-    std::shared_ptr<const LocalOutputSignal> outputSignal{};
+    std::shared_ptr<LocalOutputSignal> outputSignal{};
 };
+
 #endif //BLOCKDIAGRAMBUILDER_SIGNAL_H

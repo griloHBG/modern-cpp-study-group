@@ -10,28 +10,44 @@
 #include <numeric>
 #include <functional>
 
-template <typename SignalType, int functionNumber, int inputNumber, int outputNumber>
+template <typename SignalType, int inputNumber, int outputNumber>
 class BlockBase {
-
-    friend class OutputSignal<SignalType>;
+    
+    using BlockFunction = std::function<SignalType(void)>;
     
 public:
     
-    InputSignal<SignalType>& input(int index) {
+    BlockBase() = default;
+    
+    template<int index>
+    InputSignal<SignalType>& input() {
         return inputs.at(index);
     }
     
-    OutputSignal<SignalType>& output(int index) {
-        return outputs.at(index);
+    template<int index>
+    OutputSignal<SignalType>& output() {
+        if(thisBlockIsReady) {
+            return outputs.at(index);
+        } else {
+            throw std::runtime_error("function setupBlockFunctions was not called!");
+        }
     }
     
-    virtual SignalType operator()() = 0;
-    
 protected:
-    std::array<InputSignal<SignalType>, inputNumber> inputs{};
-    std::array<OutputSignal<SignalType>, outputNumber> outputs{};
-    std::array<std::function<OutputSignal<SignalType>(std::array<InputSignal<SignalType>,inputNumber>)>, functionNumber> bfa{};
+    std::array<InputSignal<SignalType>, inputNumber> inputs;
+    std::array<OutputSignal<SignalType>, outputNumber> outputs;
+    
+    std::array<BlockFunction, outputNumber> blockFunctions;
+    
+    void setupBlockFunctions(){
+        for(int i = 0; i < outputNumber; ++i) {
+            outputs[i] = OutputSignal<SignalType>(blockFunctions[i]);
+        }
+        thisBlockIsReady = true;
+    }
+    
+private:
+    bool thisBlockIsReady = false;
 };
-
 
 #endif //BLOCKDIAGRAMBUILDER_BLOCKBASE_H

@@ -6,19 +6,15 @@
 #define BLOCKDIAGRAMBUILDER_BLOCKCONSTANT_H
 
 template <typename SignalType>
-class BlockConstant: public BlockBase<SignalType, 1, 0, 1> {
+class BlockConstant: public BlockBase<SignalType, 0, 1> {
     
-    using LocalBlockBase=BlockBase<SignalType, 1, 0, 1>;
+    using LocalBlockBase=BlockBase<SignalType, 0, 1>;
     
 public:
-    BlockConstant(SignalType value): value{value}{}
-    
-    const OutputSignal<SignalType>& output() {
-        return LocalBlockBase::output(0);
-    }
-    
-    virtual SignalType operator()() {
-        return value;
+    BlockConstant(SignalType value): LocalBlockBase{}, value{value}{
+        this->blockFunctions[0] = [this](){return this->value;};
+        
+        this->setupBlockFunctions();
     }
     
 private:

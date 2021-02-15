@@ -10,18 +10,22 @@
 #include <numeric>
 
 template <typename SignalType, int inputNumber>
-class BlockSum: public BlockBase<SignalType, 1, inputNumber, 1> {
-    using LocalBlockBase=BlockBase<SignalType, 1, inputNumber, 1>;
+class BlockSum: public BlockBase<SignalType, inputNumber, 1> {
+    using LocalBlockBase=BlockBase<SignalType, inputNumber, 1>;
     using LocalInputSignal=InputSignal<SignalType>;
 public:
     
     BlockSum() {
-        this->bfa = {};
-    }
+        helperFunction = [](SignalType s, InputSignal<SignalType>& is) {return s + is.get();};
+        this->blockFunctions[0] = [this](){return std::accumulate(begin(this->inputs),
+                                        end(this->inputs),
+                                        0,
+                                        this->helperFunction);};
     
-    OutputSignal<SignalType>& output() {
-        return LocalBlockBase::output(0);
+        this->setupBlockFunctions();
     }
+private:
+    std::function<SignalType(SignalType, InputSignal<SignalType>&)> helperFunction;
 };
 
 
