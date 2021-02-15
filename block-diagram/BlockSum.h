@@ -17,13 +17,29 @@ public:
     
     BlockSum() {
         helperFunction = [](SignalType s, InputSignal<SignalType>& is) {return s + is.get();};
-        this->blockFunctions[0] = [this](){return std::accumulate(begin(this->inputs),
-                                        end(this->inputs),
-                                        0,
-                                        this->helperFunction);};
-    
+        this->blockFunctions[0] = [this](){
+#ifdef DEBUG
+            std::cerr << "\t\tcalling function 0 on block " << this->getName() << std::endl;
+#endif // DEBUG
+            return std::accumulate(begin(this->inputs),
+                                  end(this->inputs),
+                                  0,
+                                  this->helperFunction);
+        };
+        
         this->setupBlockFunctions();
+
+#ifdef DEBUG
+        printClassName();
+#endif //DEBUG
     }
+    
+#ifdef DEBUG
+    void printClassName() {
+        PRINT_CLASS_NAME(*this);
+        std::cerr << "\t" << this->getName() << std::endl;
+    };
+#endif //DEBUG
 private:
     std::function<SignalType(SignalType, InputSignal<SignalType>&)> helperFunction;
 };

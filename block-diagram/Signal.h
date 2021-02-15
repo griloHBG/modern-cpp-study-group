@@ -11,7 +11,18 @@
 
 template<typename SignalType>
 class SignalBase {
+public:
+    void setName(const std::string& name) {
+        signalName = name;
+    };
+    std::string getName() {
+        return signalName;
+    };
+protected:
+    explicit SignalBase(std::string name) : signalName(std::move(name)) {}
+    virtual ~SignalBase() = default;
 private:
+    std::string signalName;
     virtual SignalType get() = 0;
 };
 
@@ -25,20 +36,24 @@ class OutputSignal : public SignalBase<SignalType> {
     
 public:
     
-    OutputSignal() = default;
+    OutputSignal() :SignalBase<SignalType>(""), blockFunctionPtr(nullptr) {}
     
-    OutputSignal(BlockFunction& bf) : bf(std::make_shared<BlockFunction>(bf)) {}
+    explicit OutputSignal(const std::string& name) : SignalBase<SignalType>(name), blockFunctionPtr(nullptr) {};
+    
+    explicit OutputSignal(const std::string& name, BlockFunction& blockFunction) : SignalBase<SignalType>(name), blockFunctionPtr(std::make_shared<BlockFunction>(blockFunction)) {}
     
     SignalType get() {
-        return (*bf)();
+        return (*blockFunctionPtr)();
     }
     
     void connect(LocalInputSignal& is) {
         is.connect(this);
     }
     
+    ~OutputSignal() = default;
+    
 private:
-    std::shared_ptr<BlockFunction> bf{};
+    std::shared_ptr<BlockFunction> blockFunctionPtr{};
 };
 
 
@@ -46,14 +61,26 @@ template<typename SignalType>
 class InputSignal : public SignalBase<SignalType> {
     using LocalOutputSignal = OutputSignal<SignalType>;
 public:
+    InputSignal() : SignalBase<SignalType>(""), outputSignal(nullptr) {}
+    InputSignal(const std::string& name) : SignalBase<SignalType>(name), outputSignal(nullptr) {}
     
     [[nodiscard]] SignalType get() {
+#ifdef DEBUG
+        std::cerr << "inputSignal " << this->getName() << " calling outputSignal " << getSignalConnectionName() << std::endl;
+#endif //DEBUG
         return outputSignal->get();
     }
     
     void connect(LocalOutputSignal& os) {
         outputSignal = std::make_shared<LocalOutputSignal>(os);
     }
+    
+    //TODO not so useful?
+    std::string getSignalConnectionName() const {
+        return outputSignal->getName();
+    }
+    
+    ~InputSignal() = default;
 
 private:
     std::shared_ptr<LocalOutputSignal> outputSignal{};
