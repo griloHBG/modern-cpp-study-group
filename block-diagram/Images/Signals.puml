@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class "SignalBase<SignalType>" as SignalBase {
+    + void setName(name)
+    + string getName()
+    # SignalBase(string)
+    # {abstract} ~SignalBase()
+    - {abstract} SignalType get()
+    - string signalName
+}
+
+class "InputSignal<SignalType>" as InputSignal {
+    + InputSignal()
+    + InputSignal(string)
+    + SignalType get()
+    + connect(SignalOutput)
+    + getSignalConnectionName()
+    + ~InputSignal()
+    - OutputSignal outputSignal
+}
+
+class "OutputSignal<SignalType>" as OutputSignal {
+    + OutputSignal()
+    + OutputSignal(string)
+    + OutputSignal(string, BlockFunction)
+    + SignalType get()
+    + connect(InputSignal)
+    + ~InputSignal()
+    - shared_ptr<BlockFunction> blockFunctionPtr
+}
+
+SignalBase <|-- InputSignal
+SignalBase <|-- OutputSignal
+
+@enduml

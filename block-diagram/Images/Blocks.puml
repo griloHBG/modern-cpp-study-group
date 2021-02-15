@@ -1,0 +1,43 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class BlockIndexCtorCounter {
+    +BlockIndexCtorCounter()
+    +~BlockIndexCtorCounter()
+    {static} uint blockCounter
+}
+
+class "BlockBase<SignalType, inputNumber, outputNumber>" as BlockBase{
+    + BlockBase()
+    + BlockBase(string)
+    + InputSignal input<index>()
+    + OutputSignal output<index>()
+    # array<inputNumber> inputs
+    # array<outputNumber> outputs
+    # array<outputNumber> blockFunctions
+    # void setupBlockFunctions()
+    # string getName()
+    - bool thisBlockIsReady
+    - string blockName
+    - uint blockIndex
+}
+
+class "BlockSum<SignalType, inputNumber, 1>" as BlockSum {
+    + BlockSum()
+    + printClassName() //DEBUG
+    - {field} function<SingalTypeSignalType, InputSignal> helperFunction
+
+}
+
+class "BlockConstant<SignalType, 0, 1>" as BlockConstant {
+    + BlockConstant(int)
+    + printClassName() //DEBUG
+    - SignalType value
+
+}
+
+BlockIndexCtorCounter <|-- BlockBase
+BlockBase <|-- BlockSum
+BlockBase <|-- BlockConstant
+
+@enduml
