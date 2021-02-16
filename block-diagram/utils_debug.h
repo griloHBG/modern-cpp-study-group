@@ -7,9 +7,11 @@
     #ifdef DEBUG
         #include <iostream>
         #include <cxxabi.h>
+        /// macro to print variable's name
         #define quote(x) #x
         
         //yes-op :p
+        /// macro to print the variable's class name
         #define PRINT_CLASS_NAME(obj) { \
             int status;                                                                 \
             char * demangled = abi::__cxa_demangle(typeid(obj).name(), 0, 0, &status);  \

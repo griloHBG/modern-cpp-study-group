@@ -31,5 +31,9 @@ In the `main.cpp`, we have a working example. If you want to see what happens wi
           * **This solution still allow the user to create a infinite-unsolvable loop**... Here we would need a health-checker thing to analise the infinity loop presence and raise a good error message about it (perhaps pointing out where is the problem)
         * Ideia 2: A flag in each Block that shows if it already was used/evaluated of not
             * This solution wouldn't need (**my guess**) a health-checker about the infinite loop. And seems to be a very simple implementation to solve this problem (**my guess**). Other advantage is to use this to avoid the re-evaluation of an already known output of a block.
+* Already said, but it is important: evaluate each function block only one time for each loop evaluation.
+* Something should call the diagram evaluation in a sense of event and/or time triggering 
 * After handling a Closed Loop, assure that it runs as expected.
     * Something like a workspace to manage all this would be useful?
+* How to fully evaluate a diagram that has more than one dead-end paths?
+    * Again, the workspace thing seems handy.

@@ -15,26 +15,41 @@
 #ifdef DEBUG
     #include "utils_debug.h"
 #endif //DEBUG
-
+/// BlockBase class base for all blocks (untill now)
+/// \tparam SignalType the variable type of signal that will go into and out of the Block
+/// \tparam inputNumber amount of input signals on this block
+/// \tparam outputNumber amount of output signals on this block
 template <typename SignalType, int inputNumber, int outputNumber>
 class BlockBase : private BlockIndexCtorCounter {
     
     using BlockFunction = std::function<SignalType(void)>;
     
 public:
-    //TODO allow Block to have different SignalType between input and output
+    /// Basic Constructor for BlockBase.
+    /// Takes no argument. Its name will be the current counter index from BlockIndexCtorCounter
+    /// setupBlockFunction should be called afterwards.
     BlockBase(): blockIndex(BlockIndexCtorCounter::blockIndexCounter) {};
     
-    explicit BlockBase(std::string blockName) : blockName(std::move(blockName)), blockIndex(BlockIndexCtorCounter::blockIndexCounter) {}
+    /// Constructor for BlockBase.
+    /// \param blockName Block's name. It's index will be appended to this.
+    explicit BlockBase(std::string blockName) : blockIndex(BlockIndexCtorCounter::blockIndexCounter), blockName(std::move(blockName) + std::to_string(blockIndex)) {}
     
+    /// Access inputs by reference //TODO: should this output function be const const?
+    /// \tparam index Index of the input (starting at zero)
+    /// \return
     template<int index>
     InputSignal<SignalType>& input() {
+        static_assert(index >= 0 && index < inputNumber);
         return inputs.at(index);
     }
     
+    /// Access outputs by reference //TODO: should this input function be const const?
+    /// \tparam index Index of the output (starting at zero)
+    /// \return
     template<int index>
     OutputSignal<SignalType>& output() {
-        if(thisBlockIsReady) {
+        static_assert(index >= 0 && index < outputNumber);
+        if(outputBlockFunctionSetupDone) {
             return outputs.at(index);
         } else {
             throw std::runtime_error("function setupBlockFunctions was not called!");
@@ -42,24 +57,31 @@ public:
     }
 
 protected:
+    /// Array of input signals for this block. These input signals calls connect to the output signals
     std::array<InputSignal<SignalType>, inputNumber> inputs;
+    
+    /// Array of input signals for this block. These output signals are given to connect to input signals
     std::array<OutputSignal<SignalType>, outputNumber> outputs;
     
+    /// Array of block functions for this block. There is one and only one function block for each output.
     std::array<BlockFunction, outputNumber> blockFunctions;
     
+    /// Function that connects each block function to each output, index by index. Also sets output and input names as its block name, appending "_i" for input and "_o" for output
     void setupBlockFunctions(){
         for(int i = 0; i < outputNumber; ++i) {
             outputs[i] = OutputSignal<SignalType>(getName(), blockFunctions[i]);
-            outputs[i].setName(getName());
+            outputs[i].setName(getName() + "_o");
         }
         
         for(auto& is : inputs) {
-            is.setName(getName());
+            is.setName(getName() + "_i");
         }
-        
-        thisBlockIsReady = true;
+    
+        outputBlockFunctionSetupDone = true;
     }
     
+    /// Function to get block's name. It's appended with block's index
+    /// \return
     [[nodiscard]] std::string getName() const {
         if (blockName.empty()) {
             return std::to_string(blockIndex);
@@ -70,10 +92,14 @@ protected:
     }
 
 private:
-    bool thisBlockIsReady = false;
     
+    /// variable to hold whether each output was connected to each block function
+    bool outputBlockFunctionSetupDone = false;
+    
+    /// variable to hold block's name
     const std::string blockName;
     
+    /// variable to hold blocks "historical" index
     const unsigned int blockIndex = 0;
 };
 
