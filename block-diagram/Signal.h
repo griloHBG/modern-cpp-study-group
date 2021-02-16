@@ -37,9 +37,9 @@ protected:
     /// \param name Signal's name
     explicit SignalBase(const std::string& name) : signalName(name) {}
     
-    /// Protected constructor for Signal Base so only derived classes can call this
-    /// \param name Signal's name
-    explicit SignalBase(std::string&& name) : signalName(std::move(name)) {}
+    // Protected constructor for Signal Base so only derived classes can call this
+    // \param name Signal's name
+    //explicit SignalBase(std::string&& name) : signalName(std::move(name)) {}
     
     /// virtual destructor for avoid the "slicing" deletion of its derived classes
     virtual ~SignalBase() = default;
@@ -67,7 +67,8 @@ public:
     
     /// Constructor that receives a name for the OutputSignal
     /// \param name output signal's name
-    explicit OutputSignal(const std::string& name) : SignalBase<SignalType>(name), blockFunctionPtr(nullptr) {};
+    explicit OutputSignal(std::string name) : SignalBase<SignalType>(std::move(name)), blockFunctionPtr(nullptr) {};
+    //explicit OutputSignal(const std::string& name) : SignalBase<SignalType>(name), blockFunctionPtr(nullptr) {};
     
     /// Constructor that receives a name and block function for the output
     /// \param name output signal's name

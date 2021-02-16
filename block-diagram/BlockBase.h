@@ -19,10 +19,10 @@
 /// \tparam SignalType the variable type of signal that will go into and out of the Block
 /// \tparam inputNumber amount of input signals on this block
 /// \tparam outputNumber amount of output signals on this block
-template <typename SignalType, int inputNumber, int outputNumber>
+template <typename InputSignalType, typename OutputSignalType, int inputNumber, int outputNumber>
 class BlockBase : private BlockIndexCtorCounter {
     
-    using BlockFunction = std::function<SignalType(void)>;
+    using BlockFunction = std::function<OutputSignalType(void)>;
     
 public:
     /// Basic Constructor for BlockBase.
@@ -38,7 +38,7 @@ public:
     /// \tparam index Index of the input (starting at zero)
     /// \return
     template<int index>
-    InputSignal<SignalType>& input() {
+    InputSignal<InputSignalType>& input() {
         static_assert(index >= 0 && index < inputNumber);
         return inputs.at(index);
     }
@@ -47,7 +47,7 @@ public:
     /// \tparam index Index of the output (starting at zero)
     /// \return
     template<int index>
-    OutputSignal<SignalType>& output() {
+    OutputSignal<OutputSignalType>& output() {
         static_assert(index >= 0 && index < outputNumber);
         if(outputBlockFunctionSetupDone) {
             return outputs.at(index);
@@ -58,10 +58,10 @@ public:
 
 protected:
     /// Array of input signals for this block. These input signals calls connect to the output signals
-    std::array<InputSignal<SignalType>, inputNumber> inputs;
+    std::array<InputSignal<InputSignalType>, inputNumber> inputs;
     
     /// Array of input signals for this block. These output signals are given to connect to input signals
-    std::array<OutputSignal<SignalType>, outputNumber> outputs;
+    std::array<OutputSignal<OutputSignalType>, outputNumber> outputs;
     
     /// Array of block functions for this block. There is one and only one function block for each output.
     std::array<BlockFunction, outputNumber> blockFunctions;
@@ -69,7 +69,7 @@ protected:
     /// Function that connects each block function to each output, index by index. Also sets output and input names as its block name, appending "_i" for input and "_o" for output
     void setupBlockFunctions(){
         for(int i = 0; i < outputNumber; ++i) {
-            outputs[i] = OutputSignal<SignalType>(getName(), blockFunctions[i]);
+            outputs[i] = OutputSignal<OutputSignalType>(getName(), blockFunctions[i]);
             outputs[i].setName(getName() + "_o");
         }
         

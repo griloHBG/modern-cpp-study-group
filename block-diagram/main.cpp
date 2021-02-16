@@ -4,7 +4,23 @@
 
 #ifdef DEBUG
     #include "utils_debug.h"
+#include "BlockMux.h"
+
 #endif //DEBUG
+
+template<typename T, size_t i>
+std::ostream& operator<<(std::ostream& os, std::array<T,i> array) {
+    
+    os << "[ ";
+    
+    for (auto& a : array) {
+        os << a << " ";
+    }
+    
+    os << "]";
+    
+    return os;
+}
 
 int main() {
     
@@ -12,8 +28,8 @@ int main() {
     BlockConstant<int> bc2{2};
     BlockConstant<int> bc5{5};
     
-    BlockSum<int, 2> sum1;
-    BlockSum<int, 2> sum2;
+    BlockSum<int, int, 2> sum1;
+    BlockSum<int, int, 2> sum2;
     
     sum1.input<0>().connect(bc1.output<0>());
     sum1.input<1>().connect(bc2.output<0>());
@@ -21,13 +37,21 @@ int main() {
     sum2.input<0>().connect(sum1.output<0>());
     sum2.input<1>().connect(bc5.output<0>());
     
-    BlockSum<int, 3> sum3;
+    BlockSum<int, int, 3> sum3;
     
     sum3.input<0>().connect(sum1.output<0>());
     sum3.input<1>().connect(sum2.output<0>());
     sum3.input<2>().connect(bc5.output<0>());
     
     std::cout << sum3.output<0>().get() << std::endl; //Ok : there is no loop to evaluate sum3's output
+    
+    BlockMux<int, std::array<int, 3>, 3> mux;
+    
+    mux.input<0>().connect(bc1.output<0>());
+    mux.input<1>().connect(sum1.output<0>());
+    mux.input<2>().connect(bc5.output<0>());
+    
+    std::cout << mux.output<0>().get() << std::endl; //Ok : there is no loop to evaluate sum3's output
     
     //Uncomment the following comment block to see the infinity loop occuring
     /*

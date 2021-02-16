@@ -12,15 +12,15 @@
 /// Block used to sum signals of type Signal Type
 /// \tparam SignalType Type of signals to be summed up and also output
 /// \tparam inputNumber Amount of input signals (to be summed up)
-template <typename SignalType, int inputNumber>
-class BlockSum: public BlockBase<SignalType, inputNumber, 1> {
-    using LocalBlockBase=BlockBase<SignalType, inputNumber, 1>;
-    using LocalInputSignal=InputSignal<SignalType>;
+template <typename InputSignalType, typename OutputSignalType, int inputNumber>
+class BlockSum: public BlockBase<InputSignalType, OutputSignalType, inputNumber, 1> {
+    using LocalBlockBase=BlockBase<InputSignalType, OutputSignalType, inputNumber, 1>;
+    using LocalInputSignal=InputSignal<InputSignalType>;
 public:
     
     /// Simple constructor
     BlockSum() {
-        helperFunction = [](SignalType s, InputSignal<SignalType>& is) {return s + is.get();};
+        helperFunction = [](InputSignalType s, InputSignal<InputSignalType>& is) {return s + is.get();};
         this->blockFunctions[0] = [this](){
 #ifdef DEBUG
             std::cerr << "\t\tcalling function 0 on block " << this->getName() << std::endl;
@@ -47,7 +47,7 @@ public:
 #endif //DEBUG
 private:
     /// helper lambda function to help on the accumulate call
-    std::function<SignalType(SignalType, InputSignal<SignalType>&)> helperFunction;
+    std::function<InputSignalType(InputSignalType, InputSignal<InputSignalType>&)> helperFunction;
 };
 
 

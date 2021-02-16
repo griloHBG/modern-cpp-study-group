@@ -5,17 +5,17 @@
 #ifndef BLOCKDIAGRAMBUILDER_BLOCKCONSTANT_H
 #define BLOCKDIAGRAMBUILDER_BLOCKCONSTANT_H
 
-/// A block that represents a constant signal of type SignalType
-/// \tparam SignalType variable type of the constant signal
-template <typename SignalType>
-class BlockConstant: public BlockBase<SignalType, 0, 1> {
+/// A block that represents a constant signal of type OutputSignalType
+/// \tparam OutputSignalType variable type of the constant signal
+template <typename OutputSignalType>
+class BlockConstant: public BlockBase<void, OutputSignalType, 0, 1> {
     
-    using LocalBlockBase=BlockBase<SignalType, 0, 1>;
+    using LocalBlockBase=BlockBase<void, OutputSignalType, 0, 1>;
     
 public:
-    /// Constructor for a block that outputs a constant signal of type SignalType
+    /// Constructor for a block that outputs a constant signal of type OutputSignalType
     /// \param value
-    explicit BlockConstant(SignalType value): value{value}{
+    explicit BlockConstant(OutputSignalType value): value{value}{
         this->blockFunctions[0] = [this](){
 #ifdef DEBUG
             std::cerr << "\t\tcalling function 0 on block " << this->getName() << std::endl;
@@ -40,6 +40,6 @@ private:
 #endif //DEBUG
 
     /// Constant value that this block outputs in it's output signal
-    SignalType value;
+    OutputSignalType value;
 };
 #endif //BLOCKDIAGRAMBUILDER_BLOCKCONSTANT_H
