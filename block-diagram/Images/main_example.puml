@@ -12,20 +12,33 @@ usecase (sum1 [id 4]) as sum1
 usecase (sum2 [id 5]) as sum2
 usecase (sum3 [id 6]) as sum3
 
-(bc1) --> (sum1)
-(bc2) --> (sum1)
+usecase (mux [id 7]) as mux
 
-(sum1) --> (sum2)
-(bc5) ---> (sum2)
+bc1 --> sum1
+bc2 --> sum1
 
-(sum1) ---> (sum3)
-(sum2) --> (sum3)
-(bc5) ----> (sum3)
+sum1 --> sum2
+bc5 ---> sum2
 
-(sum3) ..> (sum4)
-(sum5) ..> (sum4)
+sum1 ---> sum3
+sum2 --> sum3
+bc5 ----> sum3
 
-(sum4) ..> (sum5)
-(bc5) ..> (sum5)
+sum3 ..> sum4
+sum5 ..> sum4
+
+sum4 ..> sum5
+bc5 ..> sum5
+
+bc5 --------> mux
+bc1 --> mux
+sum1 ------> mux
+
+usecase (bcEae [id 8])  as bcEae
+usecase (bcXablau [id 9])  as bcXablau
+usecase (ssum [id 10])  as ssum
+
+bcEae --> ssum
+bcXablau --> ssum
 
 @enduml
