@@ -15,12 +15,14 @@ class BlockConstant: public BlockBase<void, OutputSignalType, 0, 1> {
 public:
     /// Constructor for a block that outputs a constant signal of type OutputSignalType
     /// \param value
-    explicit BlockConstant(OutputSignalType value): value{value}{
+    explicit BlockConstant(OutputSignalType value) {
+        this->outputValue = value;
+        this->template setAlreadyEvaluated<0>();
         this->blockFunctions[0] = [this](){
 #ifdef DEBUG
             std::cerr << "\t\tcalling function 0 on block " << this->getName() << std::endl;
 #endif // DEBUG
-            return this->value;
+            return this->outputValue;
         };
         
         this->setupBlockFunctions();
@@ -39,7 +41,5 @@ private:
     };
 #endif //DEBUG
 
-    /// Constant value that this block outputs in it's output signal
-    OutputSignalType value;
 };
 #endif //BLOCKDIAGRAMBUILDER_BLOCKCONSTANT_H

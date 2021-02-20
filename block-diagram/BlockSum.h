@@ -22,13 +22,18 @@ public:
     BlockSum() {
         helperFunction = [](InputSignalType s, InputSignal<InputSignalType>& is) {return s + is.get();};
         this->blockFunctions[0] = [this](){
+            if (!this->template getAlreadyEvaluated<0>()) {
 #ifdef DEBUG
-            std::cerr << "\t\tcalling function 0 on block " << this->getName() << std::endl;
+                std::cerr << "\t\tcalling function 0 on block " << this->getName() << std::endl;
 #endif // DEBUG
-            return std::accumulate(begin(this->inputs),
-                                  end(this->inputs),
-                                  OutputSignalType{},
-                                  this->helperFunction);
+                this->outputValue = std::accumulate(begin(this->inputs),
+                                                    end(this->inputs),
+                                                    OutputSignalType{},
+                                                    this->helperFunction);
+                this->template setAlreadyEvaluated<0>();
+            }
+            
+            return this->outputValue;
         };
         
         this->setupBlockFunctions();

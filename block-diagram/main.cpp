@@ -70,7 +70,7 @@ int main() {
     BlockConstant<std::string> bcEae{"eae"};
     BlockConstant<std::string> bcXablau{" xablau"};
     
-    BlockSum<std::string, 2> ssum;
+    BlockSum<std::string, std::string, 2> ssum;
     
     ssum.input<0>().connect(bcEae.output<0>());
     ssum.input<1>().connect(bcXablau.output<0>());

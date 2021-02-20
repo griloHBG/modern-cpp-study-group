@@ -90,6 +90,26 @@ protected:
             return blockName;
         }
     }
+    
+    ///
+    /// \return
+    
+    /// Function that returns if this block was already evaluated
+    /// \tparam outputIndex index of output
+    /// \return returns if the output at outputIndex was already evaluated
+    template<int outputIndex>
+    [[nodiscard]] bool getAlreadyEvaluated() const {
+        return alreadyEvaluated[outputIndex];
+    }
+    
+    /// Function that sets already evaluated to true
+    template<int outputIndex>
+    void setAlreadyEvaluated() {
+        alreadyEvaluated[outputIndex] = true;
+    }
+    
+    /// Value that holds last block evaluation
+    OutputSignalType outputValue;
 
 private:
     
@@ -101,6 +121,9 @@ private:
     
     /// variable to hold blocks "historical" index
     const unsigned int blockIndex = 0;
+    
+    /// variable to hold if block was already evaluated
+    std::array<bool, outputNumber> alreadyEvaluated;
 };
 
 #endif //BLOCKDIAGRAMBUILDER_BLOCKBASE_H
