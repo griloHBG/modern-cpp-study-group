@@ -27,7 +27,7 @@ public:
 #endif // DEBUG
             return std::accumulate(begin(this->inputs),
                                   end(this->inputs),
-                                  0,
+                                  SignalType{},
                                   this->helperFunction);
         };
         

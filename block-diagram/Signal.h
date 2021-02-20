@@ -35,7 +35,7 @@ protected:
     
     /// Protected constructor for Signal Base so only derived classes can call this
     /// \param name Signal's name
-    explicit SignalBase(std::string name) : signalName(std::move(name)) {}
+    explicit SignalBase(const std::string& name) : signalName(name) {}
     
     /// Protected constructor for Signal Base so only derived classes can call this
     /// \param name Signal's name
@@ -63,7 +63,7 @@ class OutputSignal : public SignalBase<SignalType> {
 public:
     
     /// Basic constructor
-    OutputSignal() :SignalBase<SignalType>(""), blockFunctionPtr(nullptr) {}
+    OutputSignal() :SignalBase<SignalType>(std::string{""}), blockFunctionPtr(nullptr) {}
     
     /// Constructor that receives a name for the OutputSignal
     /// \param name output signal's name
@@ -72,7 +72,7 @@ public:
     /// Constructor that receives a name and block function for the output
     /// \param name output signal's name
     /// \param blockFunction function to which this signal is connect
-    explicit OutputSignal(const std::string& name, BlockFunction& blockFunction) : SignalBase<SignalType>(name), blockFunctionPtr(std::make_shared<BlockFunction>(blockFunction)) {}
+    explicit OutputSignal(std::string name, BlockFunction& blockFunction) : SignalBase<SignalType>(name), blockFunctionPtr(std::make_shared<BlockFunction>(blockFunction)) {}
     
     /// Function that makes everything come to life!
     /// \return output of the block function to which this signal is connect

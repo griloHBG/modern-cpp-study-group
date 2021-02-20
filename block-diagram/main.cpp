@@ -43,5 +43,15 @@ int main() {
     std::cout << sum5.output<0>().get() << std::endl;
     */
     
+    BlockConstant<std::string> bcEae{"eae"};
+    BlockConstant<std::string> bcXablau{" xablau"};
+    
+    BlockSum<std::string, 2> ssum;
+    
+    ssum.input<0>().connect(bcEae.output<0>());
+    ssum.input<1>().connect(bcXablau.output<0>());
+    
+    std::cout << ssum.output<0>().get() << std::endl;
+    
     return 0;
 }
